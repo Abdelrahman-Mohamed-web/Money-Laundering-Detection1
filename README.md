@@ -207,5 +207,5 @@ ModuleNotFoundError: No module named 'src'
 FileNotFoundError: … AML_Fraud_full.csv
 : The dataset is not in data/raw/. Either download it from the Kaggle link above or let the pipeline use the bundled sample (it will log a warning and continue).
 
-License
+# License
 MIT — see LICENSE.
