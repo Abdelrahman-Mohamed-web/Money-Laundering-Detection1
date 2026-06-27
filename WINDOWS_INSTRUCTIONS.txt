@@ -1,0 +1,66 @@
+=====================================================================
+  MONEY LAUNDERING DETECTION - WINDOWS INSTRUCTIONS
+=====================================================================
+  Step-by-step guide for running the entire project on Windows 10/11.
+  All commands use PowerShell unless noted otherwise.
+=====================================================================
+
+--------------------------------------------------------------------
+  0. WHAT YOU NEED BEFORE YOU START
+--------------------------------------------------------------------
+ (a) Python 3.10 or newer.
+ (b) The project folder "money-laundering-detection" (unzipped).
+ (c) (Optional) The Kaggle CSV "AML_Fraud_full.csv".
+
+--------------------------------------------------------------------
+  1. OPEN POWERSHELL IN THE PROJECT FOLDER
+--------------------------------------------------------------------
+  PS> cd money-laundering-detection
+
+--------------------------------------------------------------------
+  2. CREATE AND ACTIVATE A VIRTUAL ENVIRONMENT (venv)
+--------------------------------------------------------------------
+  PS> py -3 -m venv .venv
+  PS> .\.venv\Scripts\Activate.ps1
+
+  If PowerShell blocks the activation script, run ONCE:
+      PS> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+--------------------------------------------------------------------
+  3. INSTALL THE PYTHON DEPENDENCIES
+--------------------------------------------------------------------
+  PS> python -m pip install --upgrade pip
+  PS> pip install -r requirements.txt
+
+--------------------------------------------------------------------
+  4. (OPTIONAL) DOWNLOAD THE KAGGLE DATASET
+--------------------------------------------------------------------
+  Put the file at exactly: data\raw\AML_Fraud_full.csv
+
+--------------------------------------------------------------------
+  5. TRAIN THE MODEL
+--------------------------------------------------------------------
+  PS> python -m src.training.train
+
+--------------------------------------------------------------------
+  6. MAKE PREDICTIONS ON NEW TRANSACTIONS
+--------------------------------------------------------------------
+  Single transaction:
+      PS> python -m src.predict --amount 1000000 --type "TRANSFER"
+
+  Expected output (JSON):
+      {
+        "amount": 1000000,
+        "type": "TRANSFER",
+        "prediction": "fraud",
+        "probability": 0.97
+      }
+
+  Batch CSV:
+      PS> python -m src.predict --csv data\raw\AML_Fraud_full.csv
+
+--------------------------------------------------------------------
+  7. RUN THE UNIT TESTS
+--------------------------------------------------------------------
+  PS> pytest -v
+=====================================================================
