@@ -109,7 +109,7 @@ python -m src.predict --amount 1000000 --type "TRANSFER"
 A one-shot wrapper is available at scripts/run_pipeline.sh:
 bash scripts/run_pipeline.
 
-# Quick start (Windows)
+## Quick start (Windows)
 All commands are for PowerShell (works in Windows Terminal, VS Code terminal, or plain PowerShell). Requires Python 3.10+ from python.org or the Microsoft Store.
 # 1. Open PowerShell in the project folder
 cd money-laundering-detection
@@ -137,7 +137,7 @@ A one-shot batch wrapper is available at scripts\run_pipeline.bat
 scripts\run_pipeline.bat:
 Using Command Prompt (cmd.exe) instead of PowerShell? Replace the activation line with .\.venv\Scripts\activate.bat.
 
-# Running the pipeline
+## Running the pipeline
 The end-to-end pipeline is exposed as a single Python module:
 python -m src.training.train
 What it does, step by step:
@@ -177,14 +177,14 @@ Batch CSV (with the required feature columns):
 python -m src.predict --csv data/raw/AML_Fraud_full.csv
  Creates AML_Fraud_full_predictions.csv next to the input file.
 
-# Running the unit tests
+## Running the unit tests
 From the project root:
 pytest -v
 Or measure coverage:
 pytest --cov=src --cov-report=term-missing
 Tests cover the feature extractor, preprocessing, and the model pipeline. On a reference run they report > 70 % line coverage.
 
-# Results & artefacts
+## Results & artefacts
 After running python -m src.training.train, the following files are regenerated:
 | File | Description |
 | --- | --- |
@@ -200,7 +200,7 @@ After running python -m src.training.train, the following files are regenerated:
 | `results/feature_importance.png` | top-20 feature importances |
 | `results/classification_report.txt` | per-class classification report |
 
-# Troubleshooting
+## Troubleshooting
 ModuleNotFoundError: No module named 'src'
 : Run commands from the project root, e.g. python -m src.training.train, not python src/training/train.py.
 
