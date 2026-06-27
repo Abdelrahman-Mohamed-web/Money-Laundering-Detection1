@@ -109,7 +109,7 @@ python -m src.predict --amount 1000000 --type "TRANSFER"
 A one-shot wrapper is available at scripts/run_pipeline.sh:
 bash scripts/run_pipeline.
 
-Quick start (Windows)
+# Quick start (Windows)
 All commands are for PowerShell (works in Windows Terminal, VS Code terminal, or plain PowerShell). Requires Python 3.10+ from python.org or the Microsoft Store.
 # 1. Open PowerShell in the project folder
 cd money-laundering-detection
