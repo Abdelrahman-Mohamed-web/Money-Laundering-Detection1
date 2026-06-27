@@ -1,0 +1,44 @@
+================================================================
+SOURCES USED – Money Laundering Detection Project
+================================================================
+This file lists every external source that informed the design,
+code, and documentation of this project.
+
+----------------------------------------------------------------
+1. DATASET
+----------------------------------------------------------------
+[D1] NTNU. "Synthetic Financial Datasets For Fraud Detection." Kaggle, 2017.
+     URL: https://www.kaggle.com/datasets/ealaxi/paysim1
+     License: CC BY 4.0.
+
+----------------------------------------------------------------
+2. ACADEMIC PAPERS
+----------------------------------------------------------------
+[P1] Lopez-Rojas, E. A., Elmir, A., & Axelsson, S. (2016).
+     "PaySim: A financial mobile money simulator for fraud detection."
+     In The 28th European Modeling and Simulation Symposium-EMSS.
+
+[P2] Phua, C., Lee, V., Smith, K., & Gayler, R. (2010).
+     "A comprehensive survey of data mining-based fraud detection research."
+     arXiv preprint arXiv:1009.6119.
+
+[P3] West, J., & Bhattacharya, M. (2016).
+     "Intelligent financial fraud detection: A comprehensive review."
+     Computers & Security, 57, 47-66.
+
+----------------------------------------------------------------
+3. SOFTWARE & LIBRARIES
+----------------------------------------------------------------
+[S1] Pedregosa, F. et al. (2011). "Scikit-learn: Machine Learning in Python."
+[S2] McKinney, W. (2010). "Data Structures for Statistical Computing in Python." (pandas)
+[S3] Harris, C. R. et al. (2020). "Array programming with NumPy." Nature, 585, 357–362.
+[S4] Lemaître, G., Nogueira, F., & Aridas, C. K. (2017). 
+     "Imbalanced-learn: A Python Toolbox to Tackle the Curse of Imbalanced Datasets in Machine Learning." 
+     Journal of Machine Learning Research.
+
+----------------------------------------------------------------
+4. PROJECT BRIEF
+----------------------------------------------------------------
+[B1] "30 Cybersecurity Projects Using Machine Learning – Complete Guide"
+     Project #11: Money Laundering Detection.
+================================================================
