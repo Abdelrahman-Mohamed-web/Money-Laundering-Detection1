@@ -16,6 +16,7 @@ Results & artefacts
 Troubleshooting
 
 Project layout
+
 money-laundering-detection/
 ├── config/
 │ └── config.yaml # paths, hyper-parameters, seeds
