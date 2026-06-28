@@ -1,0 +1,66 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    classification_report,
+    confusion_matrix,
+    precision_recall_curve,
+    roc_auc_score,
+    roc_curve,
+)
+
+
+def evaluate_classifier(model, X_test: pd.DataFrame, y_test: pd.Series, output_dir: str | Path) -> dict:
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    predictions = model.predict(X_test)
+    probabilities = model.predict_proba(X_test)[:, 1]
+
+    report = classification_report(y_test, predictions, output_dict=True, zero_division=0)
+    report_text = classification_report(y_test, predictions, zero_division=0)
+    (output_path / "classification_report.txt").write_text(report_text, encoding="utf-8")
+
+    cm = confusion_matrix(y_test, predictions)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Legitimate", "Laundering"])
+    disp.plot(cmap="Blues", values_format="d")
+    plt.title("AML Confusion Matrix")
+    plt.tight_layout()
+    plt.savefig(output_path / "confusion_matrix.png", dpi=160)
+    plt.close()
+
+    fpr, tpr, _ = roc_curve(y_test, probabilities)
+    roc_auc = roc_auc_score(y_test, probabilities)
+    plt.figure(figsize=(7, 5))
+    plt.plot(fpr, tpr, label=f"ROC AUC = {roc_auc:.3f}")
+    plt.plot([0, 1], [0, 1], linestyle="--", color="gray")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output_path / "roc_curve.png", dpi=160)
+    plt.close()
+
+    precision, recall, _ = precision_recall_curve(y_test, probabilities)
+    plt.figure(figsize=(7, 5))
+    sns.lineplot(x=recall, y=precision)
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.title("Precision-Recall Curve")
+    plt.tight_layout()
+    plt.savefig(output_path / "pr_curve.png", dpi=160)
+    plt.close()
+
+    return {
+        "accuracy": report["accuracy"],
+        "roc_auc": roc_auc,
+        "laundering_precision": report.get("1", {}).get("precision", 0),
+        "laundering_recall": report.get("1", {}).get("recall", 0),
+        "laundering_f1": report.get("1", {}).get("f1-score", 0),
+    }
