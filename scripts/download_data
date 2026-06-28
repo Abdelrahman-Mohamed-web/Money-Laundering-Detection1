@@ -1,0 +1,3 @@
+New-Item -ItemType Directory -Force data/raw | Out-Null
+kaggle datasets download -d ealtman2019/ibm-transactions-for-anti-money-laundering-aml -p data/raw --unzip
+Write-Host "Kaggle AML dataset downloaded to data/raw"
