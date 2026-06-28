@@ -1,0 +1,56 @@
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+TARGET_COLUMN = "Is Laundering"
+
+
+def build_transaction_features(df: pd.DataFrame, target_column: str = TARGET_COLUMN) -> tuple[pd.DataFrame, pd.Series | None]:
+    features = df.copy()
+    labels = None
+    if target_column in features.columns:
+        labels = features[target_column].astype(int)
+        features = features.drop(columns=[target_column])
+
+    features["Timestamp"] = pd.to_datetime(features["Timestamp"], errors="coerce")
+    features["hour"] = features["Timestamp"].dt.hour.fillna(0).astype(int)
+    features["day_of_week"] = features["Timestamp"].dt.dayofweek.fillna(0).astype(int)
+    features["is_weekend"] = features["day_of_week"].isin([5, 6]).astype(int)
+
+    features["amount_received"] = pd.to_numeric(features["Amount Received"], errors="coerce").fillna(0)
+    features["amount_paid"] = pd.to_numeric(features["Amount Paid"], errors="coerce").fillna(0)
+    features["amount_difference"] = (features["amount_paid"] - features["amount_received"]).abs()
+    features["amount_ratio"] = features["amount_paid"] / features["amount_received"].replace(0, np.nan)
+    features["amount_ratio"] = features["amount_ratio"].replace([np.inf, -np.inf], np.nan).fillna(0)
+    features["log_amount_paid"] = np.log1p(features["amount_paid"].clip(lower=0))
+
+    features["same_currency"] = (features["Payment Currency"] == features["Receiving Currency"]).astype(int)
+    features["same_bank"] = (features["From Bank"].astype(str) == features["To Bank"].astype(str)).astype(int)
+
+    features["from_bank_frequency"] = features.groupby("From Bank")["From Bank"].transform("count")
+    features["to_bank_frequency"] = features.groupby("To Bank")["To Bank"].transform("count")
+    features["from_account_frequency"] = features.groupby("Account")["Account"].transform("count")
+    features["to_account_frequency"] = features.groupby("Account.1")["Account.1"].transform("count")
+
+    columns = [
+        "hour",
+        "day_of_week",
+        "is_weekend",
+        "amount_received",
+        "amount_paid",
+        "amount_difference",
+        "amount_ratio",
+        "log_amount_paid",
+        "same_currency",
+        "same_bank",
+        "from_bank_frequency",
+        "to_bank_frequency",
+        "from_account_frequency",
+        "to_account_frequency",
+        "Receiving Currency",
+        "Payment Currency",
+        "Payment Format",
+    ]
+    return features[columns], labels
