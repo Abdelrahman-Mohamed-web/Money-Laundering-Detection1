@@ -1,0 +1,56 @@
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import joblib
+
+from src.evaluation.evaluator import evaluate_classifier
+from src.feature_engineering.transaction_features import build_transaction_features
+from src.models.classifier import build_classifier
+from src.preprocessing.data_loader import load_transactions, split_data
+from src.utils.helpers import load_yaml, save_json
+
+
+def train(config_path: str | Path) -> dict:
+    config = load_yaml(config_path)
+    data_config = config["data"]
+    output_config = config["outputs"]
+
+    df = load_transactions(data_config["raw_path"])
+    train_df, _, test_df = split_data(
+        df,
+        target_column=data_config["target_column"],
+        test_size=data_config["test_size"],
+        validation_size=data_config["validation_size"],
+        random_state=data_config["random_state"],
+    )
+
+    X_train, y_train = build_transaction_features(train_df, data_config["target_column"])
+    X_test, y_test = build_transaction_features(test_df, data_config["target_column"])
+
+    model = build_classifier(config)
+    model.fit(X_train, y_train)
+
+    metrics = evaluate_classifier(model, X_test, y_test, output_config["results_dir"])
+
+    model_path = Path(output_config["model_path"])
+    model_path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, model_path)
+    save_json(list(X_train.columns), output_config["feature_columns_path"])
+    save_json(metrics, Path(output_config["results_dir"]) / "metrics_summary.json")
+    return metrics
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Train a money laundering detection model.")
+    parser.add_argument("--config", default="config/config.yaml", help="Path to YAML config.")
+    args = parser.parse_args()
+    metrics = train(args.config)
+    print("Training complete")
+    for key, value in metrics.items():
+        print(f"{key}: {value:.4f}")
+
+
+if __name__ == "__main__":
+    main()
