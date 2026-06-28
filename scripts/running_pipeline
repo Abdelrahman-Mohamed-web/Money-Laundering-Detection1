@@ -1,0 +1,2 @@
+python -m src.training.train --config config/config.yaml
+python -m src.predict --input data/sample/sample_transactions.csv --output results/sample_predictions.csv
