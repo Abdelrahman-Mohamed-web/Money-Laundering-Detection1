@@ -1,0 +1,18 @@
+from pathlib import Path
+
+from src.preprocessing.data_loader import load_transactions, split_data
+
+
+SAMPLE_PATH = Path("data/sample/sample_transactions.csv")
+
+
+def test_load_transactions_has_expected_columns():
+    df = load_transactions(SAMPLE_PATH)
+    assert "Is Laundering" in df.columns
+    assert len(df) > 0
+
+
+def test_split_data_preserves_all_rows():
+    df = load_transactions(SAMPLE_PATH)
+    train, val, test = split_data(df, "Is Laundering", 0.2, 0.2, 42)
+    assert len(train) + len(val) + len(test) == len(df)
