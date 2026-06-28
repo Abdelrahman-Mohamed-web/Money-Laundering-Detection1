@@ -1,0 +1,16 @@
+from pathlib import Path
+
+from src.feature_engineering.transaction_features import build_transaction_features
+from src.models.classifier import build_classifier
+from src.preprocessing.data_loader import load_transactions
+from src.utils.helpers import load_yaml
+
+
+def test_classifier_can_fit_sample_data():
+    config = load_yaml("config/config.yaml")
+    df = load_transactions(Path("data/sample/sample_transactions.csv"))
+    X, y = build_transaction_features(df)
+    model = build_classifier(config)
+    model.fit(X, y)
+    predictions = model.predict(X)
+    assert len(predictions) == len(df)
