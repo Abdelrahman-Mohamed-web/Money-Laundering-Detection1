@@ -1,0 +1,59 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+
+EXPECTED_COLUMNS = {
+    "Timestamp",
+    "From Bank",
+    "Account",
+    "To Bank",
+    "Account.1",
+    "Amount Received",
+    "Receiving Currency",
+    "Amount Paid",
+    "Payment Currency",
+    "Payment Format",
+    "Is Laundering",
+}
+
+
+def load_transactions(path: str | Path) -> pd.DataFrame:
+    data_path = Path(path)
+    if not data_path.exists():
+        raise FileNotFoundError(
+            f"Dataset not found at {data_path}. Download the Kaggle AML dataset into data/raw/ "
+            "or update config/config.yaml to point at an available CSV."
+        )
+
+    df = pd.read_csv(data_path)
+    missing = EXPECTED_COLUMNS.difference(df.columns)
+    if missing:
+        raise ValueError(f"Dataset is missing required columns: {sorted(missing)}")
+    return df
+
+
+def split_data(
+    df: pd.DataFrame,
+    target_column: str,
+    test_size: float,
+    validation_size: float,
+    random_state: int,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    train_val, test = train_test_split(
+        df,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=df[target_column],
+    )
+    relative_val_size = validation_size / (1 - test_size)
+    train, val = train_test_split(
+        train_val,
+        test_size=relative_val_size,
+        random_state=random_state,
+        stratify=train_val[target_column],
+    )
+    return train, val, test
