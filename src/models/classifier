@@ -1,0 +1,38 @@
+rom __future__ import annotations
+
+import numpy as np
+from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+
+CATEGORICAL_COLUMNS = ["Receiving Currency", "Payment Currency", "Payment Format"]
+
+
+def build_classifier(config: dict) -> Pipeline:
+    model_config = config.get("model", {})
+    numeric_transformer = StandardScaler()
+    categorical_transformer = OneHotEncoder(handle_unknown="ignore")
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("categorical", categorical_transformer, CATEGORICAL_COLUMNS),
+            ("numeric", numeric_transformer, make_column_selector(dtype_include=np.number)),
+        ]
+    )
+
+    classifier = RandomForestClassifier(
+        n_estimators=model_config.get("n_estimators", 200),
+        max_depth=model_config.get("max_depth", 12),
+        class_weight=model_config.get("class_weight", "balanced"),
+        random_state=model_config.get("random_state", 42),
+        n_jobs=model_config.get("n_jobs", 1),
+    )
+
+    return Pipeline(
+        steps=[
+            ("preprocess", preprocessor),
+            ("classifier", classifier),
+        ]
+    )
