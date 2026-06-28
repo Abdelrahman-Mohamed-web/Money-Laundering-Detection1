@@ -1,0 +1,14 @@
+from pathlib import Path
+
+from src.feature_engineering.transaction_features import build_transaction_features
+from src.preprocessing.data_loader import load_transactions
+
+
+def test_build_transaction_features_creates_numeric_signals():
+    df = load_transactions(Path("data/sample/sample_transactions.csv"))
+    X, y = build_transaction_features(df)
+    assert "amount_difference" in X.columns
+    assert "same_currency" in X.columns
+    assert "Payment Format" in X.columns
+    assert y is not None
+    assert len(X) == len(y)
